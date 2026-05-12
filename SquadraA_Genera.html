@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Il Collezionista — Squadra A — Dossier</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=Oswald:wght@300;400;600&display=swap');
+
+:root {
+  --nero: #0d0b08;
+  --oro: #b8963e;
+  --oro-chiaro: #c4a96a;
+  --crema: #e8d5a3;
+  --rosso: #8b1a1a;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Oswald', sans-serif;
+  background: var(--nero);
+  color: var(--crema);
+  min-height: 100vh;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, #2a1f0a22 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+header {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 1.8rem 1.5rem 1.2rem;
+  border-bottom: 1px solid #2a2010;
+}
+
+.lampadina {
+  display: block;
+  font-size: 1.5rem;
+  margin-bottom: 0.4rem;
+  filter: drop-shadow(0 0 14px rgba(255,200,50,0.5));
+  animation: swing 4s ease-in-out infinite;
+}
+@keyframes swing {
+  0%,100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+
+header h1 {
+  font-family: 'Special Elite', cursive;
+  font-size: 1.9rem;
+  color: var(--crema);
+  letter-spacing: 0.08em;
+}
+header h1 span { color: var(--oro); }
+header p {
+  color: #6a5a3a;
+  font-size: 0.62rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  margin-top: 0.35rem;
+}
+.badge {
+  display: inline-block;
+  background: var(--rosso);
+  color: var(--crema);
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.58rem;
+  font-weight: 600;
+  padding: 3px 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-top: 0.5rem;
+}
+
+.contenuto {
+  position: relative;
+  z-index: 1;
+  max-width: 660px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.intro {
+  font-family: 'Special Elite', cursive;
+  color: #5a4a2a;
+  text-align: center;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+
+.tit-sez {
+  font-family: 'Special Elite', cursive;
+  font-size: 1.2rem;
+  color: var(--oro);
+  margin-bottom: 0.2rem;
+}
+.sottotit {
+  color: #5a4a2a;
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid #1a1208;
+}
+
+.card-opera {
+  background: #0f0d08;
+  border: 1px solid #2a2010;
+  padding: 1.2rem;
+  margin-bottom: 1rem;
+  position: relative;
+}
+.num-badge {
+  position: absolute;
+  top: -1px; left: -1px;
+  background: var(--oro);
+  color: var(--nero);
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.58rem;
+  font-weight: 600;
+  padding: 2px 10px;
+  letter-spacing: 0.12em;
+}
+.btn-rimuovi {
+  position: absolute;
+  top: 6px; right: 8px;
+  background: transparent;
+  border: none;
+  color: #3a2a10;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: color 0.2s;
+}
+.btn-rimuovi:hover { color: var(--rosso); }
+
+.area-img {
+  border: 1px dashed #3a2a10;
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin: 0.8rem 0;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s;
+}
+.area-img:hover { border-color: var(--oro); }
+.area-img img { max-width: 100%; max-height: 180px; object-fit: contain; display: block; }
+.area-img .placeholder {
+  color: #4a3a1a;
+  font-size: 0.8rem;
+  text-align: center;
+  font-family: 'Special Elite', cursive;
+  pointer-events: none;
+}
+.area-img .placeholder .ico { font-size: 1.6rem; display: block; margin-bottom: 0.3rem; }
+.area-img input[type="file"] {
+  position: absolute; inset: 0;
+  opacity: 0; cursor: pointer;
+}
+.area-img.bloccata { cursor: default; border-color: #1a1208; }
+.area-img.bloccata input[type="file"] { display: none; }
+
+.campo { margin-bottom: 0.7rem; }
+.campo label {
+  display: block;
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #6a5a3a;
+  margin-bottom: 0.35rem;
+}
+.campo input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #2a2010;
+  padding: 0.5rem 0.2rem;
+  color: var(--crema);
+  font-family: 'Special Elite', cursive;
+  font-size: 0.95rem;
+  transition: border-color 0.3s;
+}
+.campo input:focus { outline: none; border-bottom-color: var(--oro); }
+.campo input::placeholder { color: #3a2a10; }
+.campo input:disabled { color: #5a4a2a; cursor: not-allowed; }
+
+.btn-aggiungi {
+  width: 100%;
+  padding: 0.8rem;
+  background: transparent;
+  border: 1px dashed #2a2010;
+  color: #4a3a1a;
+  font-family: 'Special Elite', cursive;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-bottom: 1.2rem;
+}
+.btn-aggiungi:hover { border-color: var(--oro); color: var(--oro); }
+
+.msg-errore {
+  background: #1a0808;
+  border-left: 3px solid var(--rosso);
+  color: #cc7a7a;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.75rem;
+  font-family: 'Oswald', sans-serif;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.8rem;
+  display: none;
+}
+
+.btn-genera {
+  width: 100%;
+  padding: 0.9rem;
+  background: var(--oro);
+  border: none;
+  color: var(--nero);
+  font-family: 'Special Elite', cursive;
+  font-size: 1rem;
+  cursor: pointer;
+  letter-spacing: 0.08em;
+  transition: background 0.3s;
+}
+.btn-genera:hover { background: var(--oro-chiaro); }
+
+.avviso-lock {
+  background: #0a0f0a;
+  border: 1px solid #2a4a2a;
+  color: #4a9a4a;
+  padding: 1rem;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-align: center;
+  margin-top: 1rem;
+  display: none;
+}
+
+.btn-scarica {
+  width: 100%;
+  padding: 0.9rem;
+  background: transparent;
+  border: 1px solid var(--oro);
+  color: var(--oro);
+  font-family: 'Special Elite', cursive;
+  font-size: 1rem;
+  cursor: pointer;
+  letter-spacing: 0.08em;
+  transition: all 0.3s;
+  margin-top: 0.8rem;
+  display: none;
+}
+.btn-scarica:hover { background: var(--oro); color: var(--nero); }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="lampadina">💡</span>
+  <h1>IL <span>COLLEZIONISTA</span></h1>
+  <p>Operazione Art Heist &bull; Louvre, Parigi</p>
+  <div class="badge">SQUADRA A — FASE 1</div>
+</header>
+
+<div class="contenuto">
+  <p class="intro">
+    Entra nel museo. Scegli 8 opere.<br>
+    Trova quello che gli altri non vedono.<br>
+    Fotografa. Descrivi. Sigilla il dossier.
+  </p>
+
+  <div class="tit-sez">Squadra A — Dossier Louvre</div>
+  <div class="sottotit">Carica il dettaglio fotografico con titolo e autore</div>
+
+  <div id="lista-opere"></div>
+  <div class="msg-errore" id="msg-errore">Completa tutte le opere (immagine, titolo, autore) prima di continuare.</div>
+  <button class="btn-aggiungi" id="btn-aggiungi" onclick="aggiungiOpera()">+ Aggiungi opera</button>
+  <button class="btn-genera" id="btn-genera" onclick="sigilla()">SIGILLA IL DOSSIER →</button>
+  <div class="avviso-lock" id="avviso-lock">
+    ✓ Dossier sigillato. Scarica il file e consegnalo al Collezionista.
+  </div>
+  <button class="btn-scarica" id="btn-scarica" onclick="esportaJSON()">
+    📦 Scarica il dossier — dossier_squadra_A.json
+  </button>
+</div>
+
+<script>
+var opere = [];
+var bloccato = false;
+var contatore = 0;
+
+function aggiungiOpera(pre) {
+  contatore++;
+  var cid = 'c' + contatore;
+  var lista = document.getElementById('lista-opere');
+  var div = document.createElement('div');
+  div.className = 'card-opera';
+  div.id = cid;
+
+  var imgSrc   = (pre && pre.img)    ? pre.img    : '';
+  var titVal   = (pre && pre.titolo) ? pre.titolo : '';
+  var autVal   = (pre && pre.autore) ? pre.autore : '';
+
+  var areaHtml = imgSrc
+    ? '<img src="' + imgSrc + '"><input type="file" accept="image/*" onchange="caricaImg(this,\'' + cid + '\')">'
+    : '<div class="placeholder"><span class="ico">🖼</span>Tocca per caricare</div><input type="file" accept="image/*" onchange="caricaImg(this,\'' + cid + '\')">';
+
+  div.innerHTML =
+    '<div class="num-badge">INDIZIO ' + contatore + '</div>' +
+    '<button class="btn-rimuovi" id="rm-' + cid + '" onclick="rimuovi(\'' + cid + '\')">✕</button>' +
+    '<div class="area-img" id="ai-' + cid + '">' + areaHtml + '</div>' +
+    '<div class="campo"><label>Titolo</label><input type="text" id="t-' + cid + '" placeholder="es. La Gioconda" value="' + titVal + '"></div>' +
+    '<div class="campo"><label>Autore</label><input type="text" id="a-' + cid + '" placeholder="es. Leonardo da Vinci" value="' + autVal + '"></div>';
+
+  lista.appendChild(div);
+}
+
+function caricaImg(input, cid) {
+  if (!input.files || !input.files[0]) return;
+  var r = new FileReader();
+  r.onload = function(e) {
+    document.getElementById('ai-' + cid).innerHTML =
+      '<img src="' + e.target.result + '"><input type="file" accept="image/*" onchange="caricaImg(this,\'' + cid + '\')">';
+  };
+  r.readAsDataURL(input.files[0]);
+}
+
+function rimuovi(cid) {
+  var el = document.getElementById(cid);
+  if (el) el.remove();
+}
+
+function sigilla() {
+  var cards = document.getElementById('lista-opere').querySelectorAll('.card-opera');
+  var nuove = [];
+  var ok = true;
+
+  cards.forEach(function(card) {
+    var cid = card.id;
+    var img = document.querySelector('#ai-' + cid + ' img');
+    var tit = document.getElementById('t-' + cid).value.trim();
+    var aut = document.getElementById('a-' + cid).value.trim();
+    if (!img || !tit || !aut) { ok = false; return; }
+    nuove.push({ img: img.src, titolo: tit, autore: aut });
+  });
+
+  if (!ok || nuove.length === 0) {
+    document.getElementById('msg-errore').style.display = 'block';
+    return;
+  }
+
+  document.getElementById('msg-errore').style.display = 'none';
+  opere = nuove;
+  bloccato = true;
+
+  document.getElementById('btn-aggiungi').style.display = 'none';
+  document.getElementById('btn-genera').style.display = 'none';
+  document.getElementById('avviso-lock').style.display = 'block';
+  document.getElementById('btn-scarica').style.display = 'block';
+
+  // blocca campi
+  cards.forEach(function(card) {
+    var cid = card.id;
+    var area = document.getElementById('ai-' + cid);
+    if (area) area.classList.add('bloccata');
+    var t = document.getElementById('t-' + cid);
+    var a = document.getElementById('a-' + cid);
+    if (t) t.disabled = true;
+    if (a) a.disabled = true;
+    var rm = document.getElementById('rm-' + cid);
+    if (rm) rm.style.display = 'none';
+  });
+}
+
+function esportaJSON() {
+  var dati = { squadra: 'A', museo: 'Louvre', opere: opere };
+  var blob = new Blob([JSON.stringify(dati, null, 2)], { type: 'application/json' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'dossier_squadra_A.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// avvia con una card vuota
+aggiungiOpera();
+</script>
+</body>
+</html>

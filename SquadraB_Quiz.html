@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Il Collezionista — Squadra B — Missione</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=Oswald:wght@300;400;600&display=swap');
+
+:root {
+  --nero: #0d0b08;
+  --oro: #b8963e;
+  --oro-chiaro: #c4a96a;
+  --crema: #e8d5a3;
+  --rosso: #8b1a1a;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Oswald', sans-serif;
+  background: var(--nero);
+  color: var(--crema);
+  min-height: 100vh;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, #2a1f0a22 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+header {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 1.8rem 1.5rem 1.2rem;
+  border-bottom: 1px solid #2a2010;
+}
+
+.lampadina {
+  display: block;
+  font-size: 1.5rem;
+  margin-bottom: 0.4rem;
+  filter: drop-shadow(0 0 14px rgba(255,200,50,0.5));
+  animation: swing 4s ease-in-out infinite;
+}
+@keyframes swing {
+  0%,100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+
+header h1 {
+  font-family: 'Special Elite', cursive;
+  font-size: 1.9rem;
+  color: var(--crema);
+  letter-spacing: 0.08em;
+}
+header h1 span { color: var(--oro); }
+header p {
+  color: #6a5a3a;
+  font-size: 0.62rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  margin-top: 0.35rem;
+}
+.badge {
+  display: inline-block;
+  background: var(--rosso);
+  color: var(--crema);
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.58rem;
+  font-weight: 600;
+  padding: 3px 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-top: 0.5rem;
+}
+
+.contenuto {
+  position: relative;
+  z-index: 1;
+  max-width: 660px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.sezione { display: none; }
+.sezione.attiva { display: block; }
+
+/* ATTESA */
+#sez-attesa {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+  padding-top: 2.5rem;
+}
+
+.messaggio {
+  font-family: 'Special Elite', cursive;
+  color: #5a4a2a;
+  text-align: center;
+  font-size: 0.95rem;
+  line-height: 1.8;
+  max-width: 340px;
+}
+
+.messaggio strong {
+  display: block;
+  color: var(--crema);
+  font-size: 1.05rem;
+  margin-bottom: 0.5rem;
+}
+
+.import-box {
+  width: 100%;
+  max-width: 380px;
+  background: #0f0d08;
+  border: 1px solid #2a2010;
+  padding: 1.2rem;
+}
+
+.import-box label {
+  display: block;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #6a5a3a;
+  margin-bottom: 0.6rem;
+}
+
+.import-box input[type="file"] {
+  width: 100%;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.78rem;
+  color: var(--crema);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.msg-errore-import {
+  background: #1a0808;
+  border-left: 3px solid var(--rosso);
+  color: #cc7a7a;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.75rem;
+  font-family: 'Oswald', sans-serif;
+  margin-top: 0.6rem;
+  display: none;
+}
+
+/* QUIZ */
+.quiz-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.8rem;
+}
+.quiz-num {
+  font-family: 'Special Elite', cursive;
+  font-size: 1rem;
+  color: var(--oro);
+}
+.barra-wrap { background: #1a1208; height: 2px; margin-bottom: 1.2rem; }
+.barra-fill { height: 100%; background: var(--oro); transition: width 0.5s ease; }
+
+.img-quiz-wrap {
+  border: 1px solid #2a2010;
+  background: #050403;
+  margin-bottom: 1.2rem;
+  position: relative;
+}
+.img-quiz-wrap::before {
+  content: '🔍 DETTAGLIO';
+  position: absolute;
+  top: 8px; left: 8px;
+  background: rgba(0,0,0,0.75);
+  color: var(--oro);
+  font-size: 0.56rem;
+  font-family: 'Oswald', sans-serif;
+  letter-spacing: 0.18em;
+  padding: 3px 8px;
+  z-index: 2;
+}
+.img-quiz { width: 100%; max-height: 280px; object-fit: contain; display: block; }
+
+.dom-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #6a5a3a;
+  margin-bottom: 0.35rem;
+  margin-top: 1rem;
+}
+.risp-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid #2a2010;
+  padding: 0.6rem 0.2rem;
+  color: var(--crema);
+  font-family: 'Special Elite', cursive;
+  font-size: 1rem;
+  transition: all 0.3s;
+  margin-bottom: 0.3rem;
+}
+.risp-input:focus { outline: none; border-bottom-color: var(--oro); }
+.risp-input.ok { border-bottom-color: #4a9a4a; }
+.risp-input.no { border-bottom-color: var(--rosso); }
+
+.fb-ok, .fb-no {
+  font-size: 0.72rem;
+  padding: 0.4rem 0.6rem;
+  font-family: 'Oswald', sans-serif;
+  margin-bottom: 0.3rem;
+  display: none;
+}
+.fb-ok { background: #0a1a0a; border-left: 2px solid #4a9a4a; color: #7acc7a; }
+.fb-no { background: #1a0a0a; border-left: 2px solid var(--rosso); color: #cc7a7a; }
+
+.btn-conferma {
+  width: 100%;
+  padding: 0.85rem;
+  background: transparent;
+  border: 1px solid var(--oro);
+  color: var(--oro);
+  font-family: 'Special Elite', cursive;
+  font-size: 0.95rem;
+  cursor: pointer;
+  letter-spacing: 0.08em;
+  transition: all 0.3s;
+  margin-top: 0.8rem;
+}
+.btn-conferma:hover { background: var(--oro); color: var(--nero); }
+
+.btn-avanti {
+  width: 100%;
+  padding: 0.85rem;
+  background: var(--oro);
+  border: none;
+  color: var(--nero);
+  font-family: 'Special Elite', cursive;
+  font-size: 0.95rem;
+  cursor: pointer;
+  letter-spacing: 0.08em;
+  transition: background 0.3s;
+  margin-top: 0.8rem;
+  display: none;
+}
+.btn-avanti:hover { background: var(--oro-chiaro); }
+
+/* RISULTATI */
+.ris-wrap { text-align: center; padding: 2rem 1rem; }
+.ris-titolo {
+  font-family: 'Special Elite', cursive;
+  font-size: 1.2rem;
+  color: var(--crema);
+  margin-bottom: 0.5rem;
+}
+.punteggio {
+  font-family: 'Special Elite', cursive;
+  font-size: 4rem;
+  color: var(--oro);
+  line-height: 1;
+  margin: 1rem 0;
+  text-shadow: 0 0 40px rgba(184,150,62,0.35);
+}
+.ris-msg {
+  color: #6a5a3a;
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  margin-bottom: 1.5rem;
+  font-family: 'Oswald', sans-serif;
+}
+.riepilogo { text-align: left; margin-bottom: 1.5rem; }
+.rip-item {
+  background: #0f0d08;
+  border: 1px solid #2a2010;
+  padding: 0.7rem;
+  margin-bottom: 0.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+.rip-item .ico { font-size: 1rem; flex-shrink: 0; }
+.rip-item .txt { font-size: 0.8rem; font-family: 'Oswald', sans-serif; font-weight: 300; text-align: left; }
+.rip-item .txt strong { font-family: 'Special Elite', cursive; display: block; color: var(--crema); }
+.rip-item .txt span { color: #6a5a3a; font-size: 0.7rem; }
+
+.btn-pdf {
+  width: 100%;
+  max-width: 340px;
+  padding: 0.9rem 1.5rem;
+  background: var(--oro);
+  border: none;
+  color: var(--nero);
+  font-family: 'Special Elite', cursive;
+  font-size: 1rem;
+  cursor: pointer;
+  letter-spacing: 0.08em;
+  transition: background 0.3s;
+}
+.btn-pdf:hover { background: var(--oro-chiaro); }
+.btn-pdf small {
+  display: block;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  opacity: 0.7;
+  margin-top: 0.2rem;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <span class="lampadina">💡</span>
+  <h1>IL <span>COLLEZIONISTA</span></h1>
+  <p>Operazione Art Heist &bull; Seconda Missione</p>
+  <div class="badge">SQUADRA B — FASE 2</div>
+</header>
+
+<!-- ATTESA DOSSIER -->
+<div class="contenuto" id="sez-attesa" style="display:flex;flex-direction:column;align-items:center;gap:1.2rem;padding-top:2.5rem;">
+  <p class="messaggio">
+    <strong>Il Collezionista ha parlato.</strong>
+    I dossier sono stati scambiati.<br><br>
+    Carica il dossier che ti ha consegnato.<br>
+    Trova i dettagli scelti dall'altra squadra.
+  </p>
+
+  <div class="import-box">
+    <label>Carica il dossier ricevuto dal Collezionista</label>
+    <input type="file" accept=".json" onchange="importaJSON(this)">
+    <div class="msg-errore-import" id="msg-errore-import">File non valido. Riprova.</div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div class="contenuto sezione" id="sez-quiz">
+  <div class="quiz-meta">
+    <div class="quiz-num" id="quiz-num">Indizio 1 / ?</div>
+  </div>
+  <div class="barra-wrap"><div class="barra-fill" id="barra-fill" style="width:0%"></div></div>
+
+  <div class="img-quiz-wrap">
+    <img class="img-quiz" id="quiz-img" src="" alt="Dettaglio opera">
+  </div>
+
+  <div class="dom-label">Titolo dell'opera</div>
+  <input type="text" class="risp-input" id="in-titolo" placeholder="Scrivi il titolo..." autocomplete="off">
+  <div class="fb-ok" id="fb-t-ok">✓ Corretto!</div>
+  <div class="fb-no" id="fb-t-no"></div>
+
+  <div class="dom-label">Autore</div>
+  <input type="text" class="risp-input" id="in-autore" placeholder="Scrivi l'autore..." autocomplete="off">
+  <div class="fb-ok" id="fb-a-ok">✓ Corretto!</div>
+  <div class="fb-no" id="fb-a-no"></div>
+
+  <button class="btn-conferma" id="btn-conferma" onclick="conferma()">CONFERMA RISPOSTA</button>
+  <button class="btn-avanti" id="btn-avanti" onclick="prossima()">PROSSIMO INDIZIO →</button>
+</div>
+
+<!-- RISULTATI -->
+<div class="contenuto sezione" id="sez-risultati">
+  <div class="ris-wrap">
+    <div class="ris-titolo">Missione completata</div>
+    <div class="punteggio" id="punteggio-val">0/0</div>
+    <div class="ris-msg" id="ris-msg"></div>
+    <div class="riepilogo" id="riepilogo"></div>
+    <button class="btn-pdf" onclick="scaricaPDF()">
+      📄 Scarica il verbale
+      <small>Esporta i risultati in PDF</small>
+    </button>
+  </div>
+</div>
+
+<script>
+var domande = [];
+var indice = 0;
+var punti = 0;
+var risposte = [];
+
+function mostraSezione(id) {
+  document.getElementById('sez-attesa').style.display = 'none';
+  ['sez-quiz','sez-risultati'].forEach(function(s) {
+    document.getElementById(s).classList.remove('attiva');
+  });
+  if (id) {
+    document.getElementById(id).classList.add('attiva');
+  } else {
+    document.getElementById('sez-attesa').style.display = 'flex';
+  }
+}
+
+function importaJSON(input) {
+  if (!input.files || !input.files[0]) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var dati = JSON.parse(e.target.result);
+      if (!dati.opere || dati.opere.length === 0) throw new Error();
+      domande = dati.opere;
+      indice = 0; punti = 0; risposte = [];
+      mostraSezione('sez-quiz');
+      mostraDom();
+    } catch(err) {
+      document.getElementById('msg-errore-import').style.display = 'block';
+    }
+  };
+  reader.readAsText(input.files[0]);
+}
+
+function mostraDom() {
+  var op = domande[indice];
+  var tot = domande.length;
+  document.getElementById('quiz-num').textContent = 'Indizio ' + (indice+1) + ' / ' + tot;
+  document.getElementById('barra-fill').style.width = (indice/tot*100) + '%';
+  document.getElementById('quiz-img').src = op.img;
+  ['in-titolo','in-autore'].forEach(function(id) {
+    var el = document.getElementById(id);
+    el.value = ''; el.className = 'risp-input'; el.disabled = false;
+  });
+  ['fb-t-ok','fb-t-no','fb-a-ok','fb-a-no'].forEach(function(id) {
+    document.getElementById(id).style.display = 'none';
+  });
+  document.getElementById('btn-conferma').style.display = 'block';
+  document.getElementById('btn-avanti').style.display = 'none';
+}
+
+function norm(s) {
+  return s.toLowerCase().trim()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-z0-9\s]/g,'').replace(/\s+/g,' ');
+}
+
+function conferma() {
+  var op = domande[indice];
+  var rT = document.getElementById('in-titolo').value;
+  var rA = document.getElementById('in-autore').value;
+  if (!rT.trim() || !rA.trim()) return;
+
+  var okT = norm(rT) === norm(op.titolo);
+  var okA = norm(rA) === norm(op.autore);
+
+  var inT = document.getElementById('in-titolo');
+  var inA = document.getElementById('in-autore');
+  inT.className = 'risp-input ' + (okT?'ok':'no');
+  inA.className = 'risp-input ' + (okA?'ok':'no');
+  inT.disabled = true; inA.disabled = true;
+
+  document.getElementById('fb-t-ok').style.display = okT?'block':'none';
+  var fno = document.getElementById('fb-t-no');
+  fno.style.display = okT?'none':'block';
+  fno.textContent = 'Era: ' + op.titolo;
+
+  document.getElementById('fb-a-ok').style.display = okA?'block':'none';
+  var ano = document.getElementById('fb-a-no');
+  ano.style.display = okA?'none':'block';
+  ano.textContent = 'Era: ' + op.autore;
+
+  punti += (okT?1:0) + (okA?1:0);
+  risposte.push({ titolo:op.titolo, autore:op.autore, rTitolo:rT, rAutore:rA, okT:okT, okA:okA, img:op.img });
+
+  document.getElementById('btn-conferma').style.display = 'none';
+  var btnAv = document.getElementById('btn-avanti');
+  btnAv.style.display = 'block';
+  btnAv.textContent = (indice===domande.length-1) ? 'VEDI RISULTATI →' : 'PROSSIMO INDIZIO →';
+}
+
+function prossima() {
+  indice++;
+  if (indice >= domande.length) mostraRisultati();
+  else mostraDom();
+}
+
+function mostraRisultati() {
+  var max = domande.length * 2;
+  document.getElementById('punteggio-val').textContent = punti+'/'+max;
+  var p = punti/max;
+  document.getElementById('ris-msg').textContent =
+    p===1   ? 'Colpo perfetto. Siete nella banda.' :
+    p>=0.7  ? 'Il Collezionista è soddisfatto.' :
+    p>=0.4  ? 'Il museo ha resistito. Riprovateci.' :
+              'Il guardiano vi ha beccati. Vergogna.';
+
+  var rip = document.getElementById('riepilogo');
+  rip.innerHTML = '';
+  risposte.forEach(function(r) {
+    var ico = (r.okT&&r.okA)?'✅':(r.okT||r.okA)?'⚠️':'❌';
+    var d = document.createElement('div');
+    d.className = 'rip-item';
+    d.innerHTML = '<div class="ico">'+ico+'</div><div class="txt"><strong>'+r.titolo+'</strong><span>'+r.autore+'</span></div>';
+    rip.appendChild(d);
+  });
+  document.getElementById('barra-fill').style.width = '100%';
+  mostraSezione('sez-risultati');
+}
+
+function scaricaPDF() {
+  var { jsPDF } = window.jspdf;
+  var doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+  var max = domande.length * 2;
+  var oggi = new Date().toLocaleDateString('it-IT');
+
+  doc.setFillColor(13,11,8); doc.rect(0,0,210,297,'F');
+  doc.setDrawColor(184,150,62); doc.setLineWidth(0.5); doc.line(15,28,195,28);
+  doc.setTextColor(232,213,163); doc.setFontSize(22); doc.setFont('helvetica','bold');
+  doc.text('IL COLLEZIONISTA', 105, 18, {align:'center'});
+  doc.setFontSize(7); doc.setTextColor(106,90,58); doc.setFont('helvetica','normal');
+  doc.text('VERBALE DI MISSIONE — SQUADRA B — SECONDA MISSIONE', 105, 24, {align:'center'});
+  doc.setFontSize(9); doc.setTextColor(184,150,62);
+  doc.text('Data: '+oggi, 15, 36);
+  doc.text('Punteggio: '+punti+' / '+max, 195, 36, {align:'right'});
+
+  var percW = Math.round((punti/max)*140);
+  doc.setFillColor(30,20,10); doc.rect(15,40,140,5,'F');
+  doc.setFillColor(184,150,62); doc.rect(15,40,percW,5,'F');
+
+  var msg = punti/max===1?'Colpo perfetto. Siete nella banda.':
+            punti/max>=0.7?'Il Collezionista è soddisfatto.':
+            punti/max>=0.4?'Il museo ha resistito.':'Il guardiano vi ha beccati.';
+  doc.setFontSize(8); doc.setTextColor(106,90,58); doc.text(msg,15,52);
+  doc.setDrawColor(42,32,16); doc.line(15,56,195,56);
+
+  var y=65, pageH=285;
+  risposte.forEach(function(r,i) {
+    if (y+72>pageH) { doc.addPage(); doc.setFillColor(13,11,8); doc.rect(0,0,210,297,'F'); y=20; }
+    doc.setFillColor(184,150,62); doc.rect(15,y-4,30,5,'F');
+    doc.setTextColor(13,11,8); doc.setFontSize(6.5); doc.setFont('helvetica','bold');
+    doc.text('INDIZIO '+(i+1),16,y);
+    var esito=(r.okT&&r.okA)?'CORRETTO':(r.okT||r.okA)?'PARZIALE':'ERRATO';
+    var col=(r.okT&&r.okA)?[42,106,42]:(r.okT||r.okA)?[140,100,20]:[139,26,26];
+    doc.setFillColor(col[0],col[1],col[2]); doc.rect(167,y-4,28,5,'F');
+    doc.setTextColor(232,213,163); doc.setFontSize(6);
+    doc.text(esito,181,y,{align:'center'}); y+=8;
+    if (r.img) {
+      try {
+        doc.addImage(r.img,'JPEG',15,y,60,45);
+        var tx=80;
+        doc.setFontSize(7); doc.setTextColor(106,90,58); doc.setFont('helvetica','normal');
+        doc.text('TITOLO CORRETTO',tx,y+6);
+        doc.setTextColor(232,213,163); doc.setFontSize(9); doc.setFont('helvetica','bold');
+        doc.text(r.titolo,tx,y+12);
+        doc.setFontSize(7); doc.setTextColor(106,90,58); doc.setFont('helvetica','normal');
+        doc.text('RISPOSTA DATA',tx,y+20);
+        doc.setTextColor(r.okT?74:200,r.okT?154:74,74); doc.setFontSize(8.5);
+        doc.text(r.rTitolo||'—',tx,y+26);
+        doc.setFontSize(7); doc.setTextColor(106,90,58); doc.setFont('helvetica','normal');
+        doc.text('AUTORE CORRETTO',tx,y+34);
+        doc.setTextColor(232,213,163); doc.setFontSize(9); doc.setFont('helvetica','bold');
+        doc.text(r.autore,tx,y+40);
+        doc.setFontSize(7); doc.setTextColor(106,90,58); doc.setFont('helvetica','normal');
+        doc.text('RISPOSTA DATA',tx,y+48);
+        doc.setTextColor(r.okA?74:200,r.okA?154:74,74); doc.setFontSize(8.5);
+        doc.text(r.rAutore||'—',tx,y+54); y+=55;
+      } catch(e) { y+=5; }
+    }
+    doc.setDrawColor(42,32,16); doc.setLineWidth(0.3); doc.line(15,y,195,y); y+=8;
+  });
+
+  var totPag=doc.internal.getNumberOfPages();
+  for(var p=1;p<=totPag;p++){
+    doc.setPage(p); doc.setFontSize(6); doc.setTextColor(58,42,16);
+    doc.text('Il Collezionista — Verbale Squadra B — '+oggi,105,292,{align:'center'});
+  }
+  doc.save('verbale_squadra_B_'+oggi.replace(/\//g,'-')+'.pdf');
+}
+</script>
+</body>
+</html>
